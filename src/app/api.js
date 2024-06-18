@@ -9,6 +9,14 @@ export const createItem = async(obj) => {
     return data.id;
 }
 
+export const createEvent = async (userId, mensaje, fecha, checkedUsersIds) => {
+    const colRef = collection(db, 'events');
+
+    for (const destinatarioId of checkedUsersIds) {
+        await addDoc(colRef, { destinatarioId, msg: mensaje, date: fecha, remitenteId: userId });
+    }
+}
+
 // UPDATE
 export const updateItem = async (id, obj) => {
     const docRef = doc(db, collectionName, id);
@@ -21,6 +29,7 @@ export const getItems= async ()  => {
     const result = await getDocs(query(colRef));
     return getArrayFromCollection(result);
 }
+
 
 // READ WITH WHERE
 // Tener en cuenta que el tipo de dato de la condición debe coincidir con el tipo de dato que hay en Firebase o no obtendré un dato de respuesta
