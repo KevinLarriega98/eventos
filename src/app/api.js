@@ -1,6 +1,6 @@
 import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, fetchSignInMethodsForEmail, sendEmailVerification, db, doc, getDoc, getDocs, collection, setDoc, updateDoc, deleteDoc, addDoc, query, where, onSnapshot } from "./firebase";
 
-const collectionName = 'items';
+const collectionName = 'usersEventos';
 
 // CREATE
 export const createItem = async(obj) => {
@@ -45,5 +45,18 @@ export const deleteItem = async (id) => {
 const getArrayFromCollection = (collection) => {
     return collection.docs.map(doc => {
         return { ...doc.data(), id: doc.id };
+    });
+}
+
+export const loginWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider).then(result => {
+        if (auth.uid) {
+            return result.user.uid
+        } else {
+            const docRef = doc(db, 'usersEventos', result.user.uid);
+            setDoc(docRef, { name: result.user.displayName });
+            return result.user.uid;
+        }
     });
 }
