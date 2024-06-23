@@ -1,4 +1,6 @@
+// api.js
 import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, fetchSignInMethodsForEmail, sendEmailVerification, db, doc, getDoc, getDocs, collection, setDoc, updateDoc, deleteDoc, addDoc, query, where, onSnapshot } from "./firebase";
+import { storage } from "./firebase"; // Import storage from firebase.js
 
 const collectionName = 'usersEventos';
 
@@ -47,6 +49,20 @@ export const getItemById = async (id) => {
 export const deleteItem = async (id) => {
     const docRef = doc(db, collectionName, id);
     await deleteDoc(docRef);
+}
+
+// Upload Profile Photo
+export const uploadProfilePhoto = async (userId, file) => {
+    const storageRef = ref(storage, `profile_photos/${userId}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+}
+
+// Set User Residence
+export const setUserResidence = async (userId, residence) => {
+    const userRef = doc(db, collectionName, userId);
+    await setDoc(userRef, { residence }, { merge: true }); // Merge ensures it doesn't overwrite other fields
 }
 
 const getArrayFromCollection = (collection) => {

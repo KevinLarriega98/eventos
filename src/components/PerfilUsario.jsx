@@ -1,39 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useUserContext } from "../app/Provider";
-import { getItemById, updateItem } from "../app/api";
+import { uploadProfilePhoto, setUserResidence } from "../app/api";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    const [usuario, setUsuario] = useUserContext();
-    const [userData, setUserData] = useState({ name: '', surname: '', age: '', interests: '' });
+    const [profilePhoto, setProfilePhoto] = useState(null);
+    const [residence, setResidence] = useState('');
+    const [, setUsuario] = useUserContext();
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (usuario) {
-                const data = await getItemById(usuario.uid);
-                setUserData(data);
-            }
-        };
+    const handlePhotoChange = (e) => {
+        if (e.target.files[0]) {
+            setProfilePhoto(e.target.files[0]);
+        }
+    };
 
-        fetchUserData();
-    }, [usuario]);
+    const handleResidenceChange = (e) => {
+        setResidence(e.target.value);
+    };
 
-    const handleUpdate = async () => {
+    const handleSaveProfile = async () => {
         try {
-            await updateItem(usuario.uid, userData);
-            alert("Profile updated successfully!");
+            if (profilePhoto) {
+                const photoURL = await uploadProfilePhoto(auth.currentUser.uid, profilePhoto);
+                // Optionally update user profile with photoURL
+            }
+            if (residence) {
+                await setUserResidence(auth.currentUser.uid, residence);
+            }
+            // Optionally update other user details as needed
+
+            // Example: Refresh user data in context
+            // setUsuario(newUserData);
+
+            navigate('/'); // Navigate to home or profile page after saving
         } catch (error) {
-            console.error("Error updating profile: ", error);
+            console.error("Error saving profile: ", error);
         }
     };
 
     return (
         <div>
-            <h2>User Profile</h2>
-            <input type="text" placeholder="Name" value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
-            <input type="text" placeholder="Surname" value={userData.surname} onChange={(e) => setUserData({ ...userData, surname: e.target.value })} />
-            <input type="number" placeholder="Age" value={userData.age} onChange={(e) => setUserData({ ...userData, age: e.target.value })} />
-            <textarea placeholder="Interests" value={userData.interests} onChange={(e) => setUserData({ ...userData, interests: e.target.value })}></textarea>
-            <button onClick={handleUpdate}>Update Profile</button>
+            <h2>Profile</h2>
+            <input type="file" onChange={handlePhotoChange} />
+            <input type="text" placeholder="Residence" value={residence} onChange={handleResidenceChange} />
+            <button onClick={handleSaveProfile}>Save Profile</button>
         </div>
     );
 };
