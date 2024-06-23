@@ -1,8 +1,18 @@
 // api.js
-import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, fetchSignInMethodsForEmail, sendEmailVerification, db, doc, getDoc, getDocs, collection, setDoc, updateDoc, deleteDoc, addDoc, query, where, onSnapshot } from "./firebase";
-import { storage } from "./firebase"; // Import storage from firebase.js
+import { auth, createUserWithEmailAndPassword } from "./firebase"; // Import `auth` and `createUserWithEmailAndPassword` from `firebase.js`
+import { collection, addDoc, doc, getDoc, getDocs, query, where, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const collectionName = 'usersEventos';
+
+
+
+// Function to set user's residence
+export const setUserResidence = async (userId, residence) => {
+    const docRef = doc(db, collectionName, userId);
+    await updateDoc(docRef, {
+        residence: residence
+    });
+}
 
 // CREATE
 export const createItem = async (obj) => {
@@ -51,31 +61,36 @@ export const deleteItem = async (id) => {
     await deleteDoc(docRef);
 }
 
-// Upload Profile Photo
-export const uploadProfilePhoto = async (userId, file) => {
-    const storageRef = ref(storage, `profile_photos/${userId}`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
-}
-
-// Set User Residence
-export const setUserResidence = async (userId, residence) => {
-    const userRef = doc(db, collectionName, userId);
-    await setDoc(userRef, { residence }, { merge: true }); // Merge ensures it doesn't overwrite other fields
-}
-
 const getArrayFromCollection = (collection) => {
     return collection.docs.map(doc => {
         return { ...doc.data(), id: doc.id };
     });
 }
 
+
+export const uploadProfilePhoto = async (userId, file) => {
+    try {
+        // Create a storage reference
+        const storageRef = ref(storage, `profilePhotos/${userId}/${file.name}`);
+
+        // Upload file to Firebase Storage
+        const snapshot = await uploadBytes(storageRef, file);
+
+        // Get download URL
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        return downloadURL; // Return the download URL of the uploaded photo
+    } catch (error) {
+        console.error("Error uploading profile photo: ", error);
+        throw error; // Throw the error for handling in the component
+    }
+}
+
 export const loginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider).then(result => {
         if (auth.uid) {
-            return result.user.uid;
+            return result.user.uid
         } else {
             const docRef = doc(db, 'usersEventos', result.user.uid);
             setDoc(docRef, { name: result.user.displayName });
@@ -83,5 +98,4 @@ export const loginWithGoogle = () => {
         }
     });
 }
-
-export { auth, createUserWithEmailAndPassword };
+export { auth, createUserWithEmailAndPassword, };

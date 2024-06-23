@@ -1,13 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserContext } from "../app/Provider";
-import { uploadProfilePhoto, setUserResidence } from "../app/api";
+import { getItemById, updateItem, uploadProfilePhoto, setUserResidence } from "../app/api";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+    const [usuario, setUsuario] = useUserContext();
+    const [userData, setUserData] = useState({ name: '', surname: '', age: '', interests: '' });
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [residence, setResidence] = useState('');
-    const [, setUsuario] = useUserContext();
     const navigate = useNavigate();
+
+    // Fetch user data on component mount or when `usuario` changes
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (usuario) {
+                const data = await getItemById(usuario.uid);
+                setUserData(data);
+            }
+        };
+
+        fetchUserData();
+    }, [usuario]);
+
+    const handleUpdate = async () => {
+        try {
+            await updateItem(usuario.uid, userData);
+            alert("Profile updated successfully!");
+        } catch (error) {
+            console.error("Error updating profile: ", error);
+        }
+    };
 
     const handlePhotoChange = (e) => {
         if (e.target.files[0]) {
@@ -22,11 +44,11 @@ const Profile = () => {
     const handleSaveProfile = async () => {
         try {
             if (profilePhoto) {
-                const photoURL = await uploadProfilePhoto(auth.currentUser.uid, profilePhoto);
+                const photoURL = await uploadProfilePhoto(usuario.uid, profilePhoto);
                 // Optionally update user profile with photoURL
             }
             if (residence) {
-                await setUserResidence(auth.currentUser.uid, residence);
+                await setUserResidence(usuario.uid, residence);
             }
             // Optionally update other user details as needed
 
@@ -42,6 +64,14 @@ const Profile = () => {
     return (
         <div>
             <h2>Profile</h2>
+            <h3>User Profile</h3>
+            <input type="text" placeholder="Name" value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
+            <input type="text" placeholder="Surname" value={userData.surname} onChange={(e) => setUserData({ ...userData, surname: e.target.value })} />
+            <input type="number" placeholder="Age" value={userData.age} onChange={(e) => setUserData({ ...userData, age: e.target.value })} />
+            <textarea placeholder="Interests" value={userData.interests} onChange={(e) => setUserData({ ...userData, interests: e.target.value })}></textarea>
+            <button onClick={handleUpdate}>Update Profile</button>
+
+            <h3>Profile Photo and Residence</h3>
             <input type="file" onChange={handlePhotoChange} />
             <input type="text" placeholder="Residence" value={residence} onChange={handleResidenceChange} />
             <button onClick={handleSaveProfile}>Save Profile</button>
