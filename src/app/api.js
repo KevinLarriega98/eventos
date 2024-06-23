@@ -3,7 +3,7 @@ import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signO
 const collectionName = 'usersEventos';
 
 // CREATE
-export const createItem = async(obj) => {
+export const createItem = async (obj) => {
     const colRef = collection(db, collectionName);
     const data = await addDoc(colRef, obj);
     return data.id;
@@ -20,19 +20,17 @@ export const createEvent = async (userId, mensaje, fecha, checkedUsersIds) => {
 // UPDATE
 export const updateItem = async (id, obj) => {
     const docRef = doc(db, collectionName, id);
-    await updateDoc(docRef, obj)
+    await updateDoc(docRef, obj);
 }
 
 // READ
-export const getItems= async ()  => {
+export const getItems = async () => {
     const colRef = collection(db, collectionName);
     const result = await getDocs(query(colRef));
     return getArrayFromCollection(result);
 }
 
-
 // READ WITH WHERE
-// Tener en cuenta que el tipo de dato de la condición debe coincidir con el tipo de dato que hay en Firebase o no obtendré un dato de respuesta
 export const getItemsByCondition = async (value) => {
     const colRef = collection(db, collectionName);
     const result = await getDocs(query(colRef, where('age', '==', value)));
@@ -61,7 +59,7 @@ export const loginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider).then(result => {
         if (auth.uid) {
-            return result.user.uid
+            return result.user.uid;
         } else {
             const docRef = doc(db, 'usersEventos', result.user.uid);
             setDoc(docRef, { name: result.user.displayName });
@@ -69,3 +67,5 @@ export const loginWithGoogle = () => {
         }
     });
 }
+
+export { auth, createUserWithEmailAndPassword };

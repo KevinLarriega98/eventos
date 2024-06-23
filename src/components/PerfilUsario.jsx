@@ -1,49 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { db, auth, doc, updateDoc, getDoc } from '../firebase';
-import { useUserContext } from '../context/Provider';
+import { useUserContext } from "../app/Provider";
+import { getItemById, updateItem } from "../app/api";
 
-const PerfilUsuario = () => {
-    const [usuario] = useUserContext();
-    const [userData, setUserData] = useState({
-        nombre: '',
-        apellidos: '',
-        edad: '',
-        intereses: ''
-    });
+const Profile = () => {
+    const [usuario, setUsuario] = useUserContext();
+    const [userData, setUserData] = useState({ name: '', surname: '', age: '', interests: '' });
 
     useEffect(() => {
         const fetchUserData = async () => {
             if (usuario) {
-                const userDoc = await getDoc(doc(db, 'usuarios', usuario.uid));
-                if (userDoc.exists()) {
-                    setUserData(userDoc.data());
-                }
+                const data = await getItemById(usuario.uid);
+                setUserData(data);
             }
         };
+
         fetchUserData();
     }, [usuario]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUserData({ ...userData, [name]: value });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (usuario) {
-            await updateDoc(doc(db, 'usuarios', usuario.uid), userData);
+    const handleUpdate = async () => {
+        try {
+            await updateItem(usuario.uid, userData);
+            alert("Profile updated successfully!");
+        } catch (error) {
+            console.error("Error updating profile: ", error);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" name="nombre" value={userData.nombre} onChange={handleChange} placeholder="Nombre" />
-            <input type="text" name="apellidos" value={userData.apellidos} onChange={handleChange} placeholder="Apellidos" />
-            <input type="number" name="edad" value={userData.edad} onChange={handleChange} placeholder="Edad" />
-            <textarea name="intereses" value={userData.intereses} onChange={handleChange} placeholder="Intereses"></textarea>
-            <button type="submit">Actualizar</button>
-        </form>
+        <div>
+            <h2>User Profile</h2>
+            <input type="text" placeholder="Name" value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
+            <input type="text" placeholder="Surname" value={userData.surname} onChange={(e) => setUserData({ ...userData, surname: e.target.value })} />
+            <input type="number" placeholder="Age" value={userData.age} onChange={(e) => setUserData({ ...userData, age: e.target.value })} />
+            <textarea placeholder="Interests" value={userData.interests} onChange={(e) => setUserData({ ...userData, interests: e.target.value })}></textarea>
+            <button onClick={handleUpdate}>Update Profile</button>
+        </div>
     );
 };
 
-export default PerfilUsuario;
+export default Profile;
