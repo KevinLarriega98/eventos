@@ -17,10 +17,8 @@ const NuevoEvento = () => {
         }
     }
 
-    console.log('usuario', usuario)
-
     useEffect(() => {
-        getItems().then(data => setListaParticipantes(data))
+        getItems('usersEventos').then(data => setListaParticipantes(data))
     }, [])
 
     return (

@@ -1,9 +1,9 @@
-import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, fetchSignInMethodsForEmail, sendEmailVerification, db, doc, getDoc, getDocs, collection, setDoc, updateDoc, deleteDoc, addDoc, query, where, onSnapshot } from "./firebase";
+import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, fetchSignInMethodsForEmail, sendEmailVerification, db, doc, getDoc, getDocs, collection, setDoc, updateDoc, deleteDoc, addDoc, query, where, onSnapshot, documentId } from "./firebase";
 
 const collectionName = 'usersEventos';
 
 // CREATE
-export const createItem = async(obj) => {
+export const createItem = async (obj) => {
     const colRef = collection(db, collectionName);
     const data = await addDoc(colRef, obj);
     return data.id;
@@ -24,8 +24,8 @@ export const updateItem = async (id, obj) => {
 }
 
 // READ
-export const getItems= async ()  => {
-    const colRef = collection(db, collectionName);
+export const getItems = async (collectName) => {
+    const colRef = collection(db, collectName);
     const result = await getDocs(query(colRef));
     return getArrayFromCollection(result);
 }
@@ -43,6 +43,13 @@ export const getItemById = async (id) => {
     const docRef = doc(db, collectionName, id);
     const result = await getDoc(docRef);
     return result.data();
+}
+
+export const getUsersByUserId = async (ids) => {
+    const result = await getDocs(query(collection(db, 'usersEventos'), where(documentId(), 'in', ids)));
+    const res = getArrayFromCollection(result);
+
+    return res
 }
 
 // DELETE

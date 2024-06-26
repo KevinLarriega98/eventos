@@ -1,0 +1,19 @@
+.container {
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    max-width: 1080px;
+    margin: 0 auto;
+    column-gap: 5px;
+}
+
+.events {
+    border: 1px solid black;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    font-weight: bold;
+    padding-left: 10px;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 10px 5px 5px black;
+}
