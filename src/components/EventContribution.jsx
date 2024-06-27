@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getItems, updateItem } from "../app/api";
-import { useUserContext } from "../app/Provider";
 
 const EventContribution = () => {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState('');
     const [contribution, setContribution] = useState('');
-    const [usuario] = useUserContext();
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -42,3 +40,4 @@ const EventContribution = () => {
 };
 
 export default EventContribution;
+
