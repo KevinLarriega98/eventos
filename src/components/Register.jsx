@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useUserContext } from "../app/Provider";
-import { createUserWithEmailAndPassword, auth } from "../app/api";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from "../app/firebase";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
