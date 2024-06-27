@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserContext } from "../app/Provider";
 import { getItemById, updateItem, uploadProfilePhoto, setUserResidence } from "../app/api";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    const [usuario, setUsuario] = useUserContext();
+    const [usuario] = useUserContext();
     const [userData, setUserData] = useState({ name: '', surname: '', age: '', interests: '' });
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [residence, setResidence] = useState('');
     const navigate = useNavigate();
 
-    // Fetch user data on component mount or when `usuario` changes
+
     useEffect(() => {
         const fetchUserData = async () => {
             if (usuario) {
@@ -43,19 +43,19 @@ const Profile = () => {
 
     const handleSaveProfile = async () => {
         try {
+            let updatedData = { ...userData };
             if (profilePhoto) {
                 const photoURL = await uploadProfilePhoto(usuario.uid, profilePhoto);
-                // Optionally update user profile with photoURL
+                updatedData.photoURL = photoURL;
             }
             if (residence) {
                 await setUserResidence(usuario.uid, residence);
             }
-            // Optionally update other user details as needed
 
-            // Example: Refresh user data in context
-            // setUsuario(newUserData);
+            await updateItem(usuario.uid, updatedData);
 
-            navigate('/'); // Navigate to home or profile page after saving
+
+            navigate('/');
         } catch (error) {
             console.error("Error saving profile: ", error);
         }
