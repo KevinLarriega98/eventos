@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { setPersistence, browserLocalPersistence } from 'firebase/auth'; // Import other necessary auth functions
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_API_KEY,
@@ -15,5 +16,5 @@ export const db = getFirestore(firebaseApp);
 export const auth = getAuth(firebaseApp);
 export const storage = getStorage(firebaseApp);
 
-// Ensure persistence
-setPersistence(auth, browserLocalPersistence);
+// Export the auth functions
+export { createUserWithEmailAndPassword, setPersistence, browserLocalPersistence };
