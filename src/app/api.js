@@ -1,7 +1,8 @@
-import { auth, db, storage } from "./firebase"; // Import `auth`, `db`, and `storage` from `firebase.js`
+import { auth, db, createUserWithEmailAndPassword, storage } from "./firebase";
 import { collection, addDoc, doc, getDoc, getDocs, query, where, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 
 const collectionName = 'usersEventos';
 
@@ -95,9 +96,10 @@ export const loginWithGoogle = () => {
             return result.user.uid;
         }
     });
+
+
 };
 
-// New function to get users by an array of user IDs
 export const getUsersByUserId = async (userIds) => {
     const users = [];
     for (const userId of userIds) {
@@ -108,5 +110,7 @@ export const getUsersByUserId = async (userIds) => {
     }
     return users;
 };
-}
-export { auth, createUserWithEmailAndPassword, };
+
+export { auth, createUserWithEmailAndPassword };
+
+
