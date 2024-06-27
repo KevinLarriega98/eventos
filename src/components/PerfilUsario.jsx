@@ -2,6 +2,56 @@ import { useState, useEffect } from 'react';
 import { useUserContext } from "../app/Provider";
 import { getItemById, updateItem, uploadProfilePhoto, setUserResidence } from "../app/api";
 import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { Link } from "react-router-dom"
+
+const ProfileContainer = styled.div`
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h2`
+    text-align: center;
+    margin-bottom: 20px;
+`;
+
+const SectionTitle = styled.h3`
+    margin-top: 20px;
+`;
+
+const Input = styled.input`
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+`;
+
+const TextArea = styled.textarea`
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+`;
+
+const Button = styled.button`
+    padding: 10px;
+    margin: 10px ;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
+
 
 const Profile = () => {
     const [usuario] = useUserContext();
@@ -54,7 +104,6 @@ const Profile = () => {
 
             await updateItem(usuario.uid, updatedData);
 
-
             navigate('/');
         } catch (error) {
             console.error("Error saving profile: ", error);
@@ -62,20 +111,23 @@ const Profile = () => {
     };
 
     return (
-        <div>
-            <h2>Profile</h2>
-            <h3>User Profile</h3>
-            <input type="text" placeholder="Name" value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
-            <input type="text" placeholder="Surname" value={userData.surname} onChange={(e) => setUserData({ ...userData, surname: e.target.value })} />
-            <input type="number" placeholder="Age" value={userData.age} onChange={(e) => setUserData({ ...userData, age: e.target.value })} />
-            <textarea placeholder="Interests" value={userData.interests} onChange={(e) => setUserData({ ...userData, interests: e.target.value })}></textarea>
-            <button onClick={handleUpdate}>Update Profile</button>
 
-            <h3>Profile Photo and Residence</h3>
-            <input type="file" onChange={handlePhotoChange} />
-            <input type="text" placeholder="Residence" value={residence} onChange={handleResidenceChange} />
-            <button onClick={handleSaveProfile}>Save Profile</button>
-        </div>
+        <ProfileContainer>
+            <Title>Profile</Title>
+            <SectionTitle>User Profile</SectionTitle>
+            <Input type="text" placeholder="Name" value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
+            <Input type="text" placeholder="Surname" value={userData.surname} onChange={(e) => setUserData({ ...userData, surname: e.target.value })} />
+            <Input type="number" placeholder="Age" value={userData.age} onChange={(e) => setUserData({ ...userData, age: e.target.value })} />
+            <TextArea placeholder="Interests" value={userData.interests} onChange={(e) => setUserData({ ...userData, interests: e.target.value })}></TextArea>
+            <Button onClick={handleUpdate}>Update Profile</Button>
+
+            <SectionTitle>Profile Photo and Residence</SectionTitle>
+            <Input type="file" onChange={handlePhotoChange} />
+            <Input type="text" placeholder="Residence" value={residence} onChange={handleResidenceChange} />
+            <Button onClick={handleSaveProfile}>Save Profile</Button> <br></br>
+            <Link to="/ListadoDeEventos"><Button>Home</Button></Link>
+        </ProfileContainer>
+
     );
 };
 
